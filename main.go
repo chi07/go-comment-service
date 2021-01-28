@@ -43,10 +43,15 @@ func main() {
 	deleteCommentService := services.NewDeleteCommentService(commentRepo)
 	getCommentService := services.NewGetCommentService(commentRepo)
 
+	voteRepo := repositories.NewVote(database)
+	voteService := services.NewVoteCommentService(voteRepo)
+
 	app.Post("/comments", handlers.NewCreateCommentHandler(createCommentService).CreateComment())
 	app.Put("/comments/:id", handlers.NewUpdateCommentHandler(updateCommentService).UpdateComment())
 	app.Delete("/comments/:id", handlers.NewDeleteCommentHandler(deleteCommentService).DeleteComment())
 	app.Get("/comments/:id", handlers.NewGetCommentHandler(getCommentService).GetComment())
+
+	app.Post("/votes", handlers.NewVoteHandler(voteService).Vote())
 
 	log.Fatal(app.Listen(":3000"))
 }

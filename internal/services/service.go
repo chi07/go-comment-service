@@ -29,8 +29,8 @@ type GetCommentRepo interface {
 }
 
 type VoteRepo interface {
-	Create(ctx *fiber.Ctx, c *models.Vote) (interface{}, error)
+	Create(ctx *fiber.Ctx, c *models.Vote) (*models.Vote, error)
 	Update(ctx *fiber.Ctx, id string, c *models.Vote) error
 	Delete(ctx *fiber.Ctx, id string) error
-	Get(ctx *fiber.Ctx, id string) (*models.Vote, error)
+	Get(ctx *fiber.Ctx, commentID, userID string) (*models.Vote, error)
 }

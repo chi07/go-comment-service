@@ -20,3 +20,7 @@ type DeleteCommentService interface {
 type GetCommentService interface {
 	GetComment(ctx *fiber.Ctx, id string) (*models.Comment, error)
 }
+
+type VoteService interface {
+	VoteComment(ctx *fiber.Ctx, v *models.Vote) (int64, error)
+}
