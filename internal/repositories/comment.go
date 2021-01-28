@@ -79,7 +79,7 @@ func (repo *Comment) Update(ctx *fiber.Ctx, id string, c *models.Comment) error 
 			Value: bson.D{
 				{Key: "content", Value: c.Content},
 				{Key: "parentID", Value: c.ParentID},
-				{Key: "articleID", Value: c.ArticleID},
+				{Key: "postID", Value: c.PostID},
 			},
 		},
 	}

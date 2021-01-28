@@ -20,7 +20,7 @@ func main() {
 	viper.AutomaticEnv()
 	mongoURI := viper.GetString("MONGO_URI")
 	dbName := viper.GetString("MONGO_DB_NAME")
-	// Connect to the database
+
 	mongoInstance, err := db.Connect(mongoURI, dbName)
 	if err != nil {
 		log.Fatal(err)
@@ -41,10 +41,12 @@ func main() {
 	createCommentService := services.NewCreateCommentService(commentRepo)
 	updateCommentService := services.NewUpdateCommentService(commentRepo)
 	deleteCommentService := services.NewDeleteCommentService(commentRepo)
+	getCommentService := services.NewGetCommentService(commentRepo)
 
 	app.Post("/comments", handlers.NewCreateCommentHandler(createCommentService).CreateComment())
 	app.Put("/comments/:id", handlers.NewUpdateCommentHandler(updateCommentService).UpdateComment())
 	app.Delete("/comments/:id", handlers.NewDeleteCommentHandler(deleteCommentService).DeleteComment())
+	app.Get("/comments/:id", handlers.NewGetCommentHandler(getCommentService).GetComment())
 
 	log.Fatal(app.Listen(":3000"))
 }

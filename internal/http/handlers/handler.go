@@ -16,3 +16,7 @@ type UpdateCommentService interface {
 type DeleteCommentService interface {
 	DeleteComment(ctx *fiber.Ctx, id string) error
 }
+
+type GetCommentService interface {
+	GetComment(ctx *fiber.Ctx, id string) (*models.Comment, error)
+}
