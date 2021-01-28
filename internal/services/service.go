@@ -27,3 +27,10 @@ type DeleteCommentRepo interface {
 type GetCommentRepo interface {
 	Get(ctx *fiber.Ctx, id string) (*models.Comment, error)
 }
+
+type VoteRepo interface {
+	Create(ctx *fiber.Ctx, c *models.Vote) (interface{}, error)
+	Update(ctx *fiber.Ctx, id string, c *models.Vote) error
+	Delete(ctx *fiber.Ctx, id string) error
+	Get(ctx *fiber.Ctx, id string) (*models.Vote, error)
+}
