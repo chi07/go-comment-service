@@ -22,10 +22,11 @@ func NewVote(db *mongo.Database) *Vote {
 const voteTables = "votes"
 
 func (repo *Vote) Get(ctx *fiber.Ctx, commentID, userID string) (*models.Vote, error) {
-	filter := bson.D{{Key: "comment_id", Value: commentID}, {Key: "user_id", Value: userID}}
+	var err error
+	filter := bson.D{primitive.E{Key: "comment_id", Value: commentID}, primitive.E{Key: "user_id", Value: userID}}
 	var vote *models.Vote
 
-	err := repo.db.Collection(voteTables).FindOne(ctx.Context(), filter).Decode(vote)
+	err = repo.db.Collection(voteTables).FindOne(ctx.Context(), filter).Decode(&vote)
 	if err == mongo.ErrNoDocuments {
 		return nil, nil
 	} else if err != nil {
@@ -45,7 +46,7 @@ func (repo *Vote) Create(ctx *fiber.Ctx, c *models.Vote) (*models.Vote, error) {
 	filter := bson.D{{Key: "_id", Value: insertionResult.InsertedID}}
 	createdRecord := collection.FindOne(ctx.Context(), filter)
 
-	var createdVote *models.Vote
+	createdVote := &models.Vote{}
 	err = createdRecord.Decode(createdVote)
 	if err != nil {
 		return nil, errors.Wrap(err, "cannot decode the vote comment from database")

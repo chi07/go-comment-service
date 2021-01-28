@@ -61,7 +61,6 @@ func (repo *Comment) Create(ctx *fiber.Ctx, c *models.Comment) (interface{}, err
 	filter := bson.D{{Key: "_id", Value: insertionResult.InsertedID}}
 	createdRecord := collection.FindOne(ctx.Context(), filter)
 
-	// decode the Mongo record into Employee
 	createdComment := &models.Comment{}
 	err = createdRecord.Decode(createdComment)
 	if err != nil {

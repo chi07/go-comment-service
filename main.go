@@ -2,7 +2,8 @@ package main
 
 import (
 	"context"
-	"log"
+
+	"github.com/rs/zerolog"
 
 	"github.com/chi07/go-comment-service/internal/http/handlers"
 	"github.com/chi07/go-comment-service/internal/services"
@@ -13,6 +14,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
@@ -21,9 +23,20 @@ func main() {
 	mongoURI := viper.GetString("MONGO_URI")
 	dbName := viper.GetString("MONGO_DB_NAME")
 
+	log.Info().Str("MONGO_URI", mongoURI).Msg("DB_URL")
+
+	logLevelStr := viper.GetString("LOG_LEVEL")
+	logLevel, err := zerolog.ParseLevel(logLevelStr)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Invalid LOG_LEVEL")
+	}
+	zerolog.LevelFieldName = "severity"
+	zerolog.SetGlobalLevel(logLevel)
+	log.Logger = log.With().Caller().Logger()
+
 	mongoInstance, err := db.Connect(mongoURI, dbName)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Msg("Could not connect to server")
 	}
 
 	defer func() {
@@ -53,5 +66,6 @@ func main() {
 
 	app.Post("/votes", handlers.NewVoteHandler(voteService).Vote())
 
-	log.Fatal(app.Listen(":3000"))
+	err = app.Listen(":3000")
+	log.Error().Err(err).Msg("Stopped serving HTTP")
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/chi07/go-comment-service/internal/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 )
 
 type VoteCommentService struct {
@@ -21,15 +22,18 @@ func (s *VoteCommentService) VoteComment(ctx *fiber.Ctx, v *models.Vote) (int64,
 	commentID := v.CommentID
 	// TODO get userID from decode the token. For testing. fix a fake userID
 	userID := "12345678"
+	v.UserID = userID
 
 	existedVote, err := s.voteRepo.Get(ctx, commentID, userID)
 	if err != nil {
+		log.Error().Err(err).Msg("could not find vote")
 		return 0, errors.Wrap(err, "cannot find vote the comment")
 	}
 
 	if existedVote == nil {
 		_, err := s.voteRepo.Create(ctx, v)
 		if err != nil {
+			log.Error().Err(err).Msg("could not create vote")
 			return 1010, errors.Wrap(err, "cannot create the vote")
 		}
 		return 10, nil
@@ -40,11 +44,13 @@ func (s *VoteCommentService) VoteComment(ctx *fiber.Ctx, v *models.Vote) (int64,
 	if existedVote.Type == v.Type {
 		err := s.voteRepo.Delete(ctx, existedVote.ID)
 		if err != nil {
+			log.Error().Err(err).Msg("could not delete vote")
 			return currentVote, errors.Wrap(err, "cannot delete the vote")
 		}
 	} else if existedVote.Type != v.Type {
 		err := s.voteRepo.Update(ctx, existedVote.ID, v)
 		if err != nil {
+			log.Error().Err(err).Msg("could not update vote")
 			return currentVote, errors.Wrap(err, "cannot update the vote")
 		}
 	}

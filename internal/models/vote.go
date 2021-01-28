@@ -7,8 +7,8 @@ type Vote struct {
 	Type      string    `json:"type" bson:"type"`
 	CommentID string    `json:"commentID" bson:"comment_id"`
 	UserID    string    `json:"userID" bson:"user_id"`
-	CreatedAt time.Time `json:"createdAt" bson:"created_at"`
-	UpdatedAt time.Time `json:"updatedAt" bson:"updated_at"`
+	CreatedAt time.Time `json:"createdAt,omitempty" bson:"created_at,omitempty"`
+	UpdatedAt time.Time `json:"updatedAt,omitempty" bson:"updated_at,omitempty"`
 }
 
 var (
