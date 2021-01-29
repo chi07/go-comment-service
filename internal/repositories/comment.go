@@ -61,13 +61,13 @@ func (repo *Comment) Create(ctx *fiber.Ctx, c *models.Comment) (interface{}, err
 	filter := bson.D{{Key: "_id", Value: insertionResult.InsertedID}}
 	createdRecord := collection.FindOne(ctx.Context(), filter)
 
-	createdComment := &models.Comment{}
-	err = createdRecord.Decode(createdComment)
+	var comment *models.Comment
+	err = createdRecord.Decode(&comment)
 	if err != nil {
 		return nil, errors.Wrap(err, "cannot get comment from database")
 	}
 
-	return createdComment, nil
+	return comment, nil
 }
 
 func (repo *Comment) Update(ctx *fiber.Ctx, id string, c *models.Comment) error {

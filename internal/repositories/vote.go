@@ -36,6 +36,26 @@ func (repo *Vote) Get(ctx *fiber.Ctx, commentID, userID string) (*models.Vote, e
 	return vote, nil
 }
 
+func (repo *Vote) CountVote(ctx *fiber.Ctx, commentID, voteType string) (int64, error) {
+	var err error
+	filter := bson.D{
+		primitive.E{Key: "comment_id", Value: commentID},
+		primitive.E{Key: "type", Value: voteType},
+	}
+
+	total, err := repo.db.Collection(voteTables).CountDocuments(ctx.Context(), filter)
+
+	if err != nil && err != mongo.ErrNoDocuments {
+		return 0, errors.Wrap(err, fmt.Sprintf("cannot get count votes of the comment with commentID=%s", commentID))
+	}
+
+	if err == mongo.ErrNoDocuments {
+		return 0, nil
+	}
+
+	return total, nil
+}
+
 func (repo *Vote) Create(ctx *fiber.Ctx, c *models.Vote) (*models.Vote, error) {
 	collection := repo.db.Collection(voteTables)
 	insertionResult, err := collection.InsertOne(ctx.Context(), c)

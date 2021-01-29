@@ -33,4 +33,5 @@ type VoteRepo interface {
 	Update(ctx *fiber.Ctx, id string, c *models.Vote) error
 	Delete(ctx *fiber.Ctx, id string) error
 	Get(ctx *fiber.Ctx, commentID, userID string) (*models.Vote, error)
+	CountVote(ctx *fiber.Ctx, commentID, voteType string) (int64, error)
 }

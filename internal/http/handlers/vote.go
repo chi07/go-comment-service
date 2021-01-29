@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/asaskevich/govalidator"
+
 	response "github.com/chi07/go-comment-service/internal/http/reponse"
 
 	"github.com/chi07/go-comment-service/internal/models"
@@ -21,6 +23,15 @@ func (h *VoteHandler) Vote() fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
 		var requestBody models.Vote
 		err := ctx.BodyParser(&requestBody)
+		if err != nil {
+			println("error: " + err.Error())
+		}
+
+		_, err = govalidator.ValidateStruct(requestBody)
+		if err != nil {
+			println("error: " + err.Error())
+		}
+
 		if err != nil {
 			return response.Error(ctx, http.StatusBadRequest, http.StatusBadRequest, "cannot decode the body of vote request")
 		}
